@@ -1,16 +1,53 @@
+import { useState, useEffect } from "react";
 import styles from "./app.module.css";
-import { data } from "../../utils/data";
+import AppHeader from "../app-header/app-header";
+import BurgerIngredients from "../burger-ingredients/burger-ingredients";
+import BurgerConstructor from "../burger-constructor/burger-constructor";
+import baseUrl from "../../utils/data";
 
 function App() {
+
+  const [state, setState] = useState({
+    data: null,
+    loading: true,
+    isError: true
+  })
+
+  const [selectedIngredients, setSelectedIngredients] = useState({
+    bun: {price: 0},
+    ingredients: []
+  })
+
+  useEffect(() => {
+    const getIngredientData = async () => {
+      setState({...state, loading: true})
+      try {
+        const res = await fetch(`${baseUrl}/ingredients`);
+        const data = await res.json();
+        setState({...state, data: data, loading: false, isError: false})
+      } catch(err) {
+        setState({...state, isError: true})
+        console.log('Oshibka')
+      }
+    }
+    getIngredientData();
+  }, []);
+
+  const handleClick = (ingredient) => {
+    ingredient.type !== 'bun' ? setSelectedIngredients({...selectedIngredients, ingredients: [...selectedIngredients.ingredients, ingredient]}) :
+     setSelectedIngredients({...selectedIngredients, bun: ingredient});
+  }
+ 
   return (
-    <div className={styles.app}>
-      <pre style={{
-      	margin: "auto",
-      	fontSize: "1.5rem"
-      }}>
-      	Измените src/components/app/app.jsx и сохраните для обновления.
-      </pre>
-    </div>
+    <>
+      <AppHeader />
+      {state.isError ? <h1>Произошла ошибка, перезагрузите страницу</h1> : 
+        <main className={styles.main}>
+        <BurgerIngredients handleClick={handleClick} data={state.data.data}/>
+        <BurgerConstructor selectedIngredients={selectedIngredients} />
+        </main>
+      }
+    </>
   );
 }
 
