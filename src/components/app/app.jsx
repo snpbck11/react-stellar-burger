@@ -3,7 +3,7 @@ import styles from "./app.module.css";
 import AppHeader from "../app-header/app-header";
 import BurgerIngredients from "../burger-ingredients/burger-ingredients";
 import BurgerConstructor from "../burger-constructor/burger-constructor";
-import baseUrl from "../../utils/data";
+import request from "../../utils/api";
 
 function App() {
 
@@ -22,12 +22,11 @@ function App() {
     const getIngredientData = async () => {
       setState({...state, loading: true})
       try {
-        const res = await fetch(`${baseUrl}/ingredients`);
-        const data = await res.json();
-        setState({...state, data: data, loading: false, isError: false})
+        request(`/ingredients`)
+        .then((data) => setState({...state, data: data, loading: false, isError: false}))        
       } catch(err) {
         setState({...state, isError: true})
-        console.log('Oshibka')
+        console.log('Ошибка')
       }
     }
     getIngredientData();

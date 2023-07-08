@@ -1,10 +1,11 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import styles from "./burger-ingredients.module.css";
 import Ingredient from "../ingredient/ingredient";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components"
 import IngredientDetails from "../ingredient-details/ingredient-details";
 import Modal from "../modal/modal";
+import { ingredientPropType } from "../../utils/prop-types"
  
 export default function BurgerIngredients({handleClick, data}) {
 
@@ -29,9 +30,9 @@ export default function BurgerIngredients({handleClick, data}) {
     }
   }
   
-  const buns = data.filter((item) => item.type === 'bun')
-  const sauces = data.filter((item) => item.type === 'sauce')
-  const main = data.filter((item) => item.type === 'main')
+  const buns = useMemo(() => data.filter((item) => item.type === 'bun'), [data])
+  const sauces = useMemo(() => data.filter((item) => item.type === 'sauce'), [data])
+  const main = useMemo(() => data.filter((item) => item.type === 'main'), [data])
 
   return(
     <section className={styles.section}>
@@ -68,6 +69,6 @@ export default function BurgerIngredients({handleClick, data}) {
 }
 
 BurgerIngredients.propTypes = {
-  data: PropTypes.array,
+  data: PropTypes.arrayOf(ingredientPropType),
   handleClick: PropTypes.func
 }
