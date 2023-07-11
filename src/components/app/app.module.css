@@ -5,3 +5,10 @@
   background-color: #131316;
   color: #f2f2f3;
 }
+
+.main {
+  max-width: 1248px;
+  margin: auto;
+  display: flex;
+  gap: 0 40px;
+}

@@ -1,0 +1,34 @@
+.header {
+  background-color: #1c1c21;
+  max-width: 1920px;
+  margin: auto;
+}
+
+.container {
+  max-width: 1248px;
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 0;
+  margin: auto;
+}
+
+.list {
+  list-style: none;
+  display: flex;
+  gap: 0 8px;
+  margin: 0;
+  padding: 0;
+}
+
+.link {
+  display: flex;
+  gap: 0 8px;
+  text-decoration: none;
+  color: #f2f2f3;
+}
+
+.logo {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
+}

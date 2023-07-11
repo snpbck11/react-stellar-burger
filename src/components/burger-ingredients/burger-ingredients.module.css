@@ -1,0 +1,22 @@
+.section {
+  max-width: 600px;
+}
+
+.menu {
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-height: calc(100vh - 300px);
+  overflow-y: auto;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px 24px;
+}

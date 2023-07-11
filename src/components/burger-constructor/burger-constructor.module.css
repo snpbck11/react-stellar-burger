@@ -1,0 +1,34 @@
+.section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex-grow: 1;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.element {
+  display: flex;
+  align-items: center;
+  gap: 0 10px;
+}
+
+.order {
+  display: flex;
+  gap: 0 40px;
+  align-self: flex-end;
+  align-items: center;
+}
+
+.price {
+  display: flex;
+  gap: 0 10px;
+  align-items: center;
+}
