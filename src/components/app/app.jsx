@@ -4,17 +4,18 @@ import AppHeader from "../app-header/app-header";
 import BurgerIngredients from "../burger-ingredients/burger-ingredients";
 import BurgerConstructor from "../burger-constructor/burger-constructor";
 import request from "../../utils/api";
+import { BurgerContext } from "../../utils/burger-context";
 
 function App() {
 
   const [state, setState] = useState({
     data: null,
-    loading: true,
+    loading: false,
     isError: true
   })
 
   const [selectedIngredients, setSelectedIngredients] = useState({
-    bun: {price: 0},
+    bun: {},
     ingredients: []
   })
 
@@ -26,7 +27,7 @@ function App() {
         .then((data) => setState({...state, data: data, loading: false, isError: false}))        
       } catch(err) {
         setState({...state, isError: true})
-        console.log('Ошибка')
+        console.log(`Ошибка ${err}`)
       }
     }
     getIngredientData();
@@ -40,12 +41,14 @@ function App() {
   return (
     <>
       <AppHeader />
+      <BurgerContext.Provider value={selectedIngredients}>
       {state.isError ? <h1>Произошла ошибка, перезагрузите страницу</h1> : 
         <main className={styles.main}>
         <BurgerIngredients handleClick={handleClick} data={state.data.data}/>
-        <BurgerConstructor selectedIngredients={selectedIngredients} />
+        <BurgerConstructor />
         </main>
       }
+      </BurgerContext.Provider>
     </>
   );
 }

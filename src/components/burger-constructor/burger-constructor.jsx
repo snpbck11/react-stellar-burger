@@ -1,23 +1,57 @@
 import PropTypes from "prop-types";
-import {useState} from 'react';
+import {useState, useContext, useMemo} from 'react';
 import styles from "./burger-constructor.module.css";
 import { ConstructorElement, DragIcon, CurrencyIcon, Button } from "@ya.praktikum/react-developer-burger-ui-components";
 import Modal from '../modal/modal';
 import OrderDetails from '../order-details/order-details';
+import { BurgerContext } from "../../utils/burger-context";
+import request from "../../utils/api";
 
-export default function BurgerConstructor({selectedIngredients}) {
+export default function BurgerConstructor() {
+  const selectedIngredients = useContext(BurgerContext);
+  const { bun, ingredients } = selectedIngredients;
+  const [order, setOrder] = useState(false);
 
-  const [order, setOrder] = useState(false)
+  const [state, setState] = useState({
+    orderNumber: null,
+    loading: true,
+    isError: true
+  })
+
+  const ingredientIds = useMemo(() => {
+    return ingredients.map(item => item._id).concat(bun._id)
+  }, [selectedIngredients.bun, selectedIngredients.ingredients])
 
   const onOpen = () => {
-    setOrder(true)
+    const getOrderDetails = async () => {
+      setState({...state, loading: true})
+      try {
+        request('/orders', {
+          method: 'POST',
+          headers:{
+            'Content-Type': 'application/json'
+          }, 
+          body: JSON.stringify({
+            "ingredients": ingredientIds
+          })
+        })
+        .then((data) => setState({...state, orderNumber: data.order.number, loading: false, isError: false}))
+        .then(() => setOrder(true))
+      } catch(err) {
+        setState({...state, isError: true})
+        console.log(`Ошибка ${err}`)
+      }
+    }
+    getOrderDetails()
   }
 
   const onClose = () => {
     setOrder(false)
   }
    
-  const totalPrice = selectedIngredients.bun.price*2 + selectedIngredients.ingredients.reduce((acc, item) => acc + item.price, 0)
+  const totalPrice = useMemo(() => {
+    return (bun.price ? bun.price*2 : 0) + ingredients.reduce((acc, item) => acc + item.price, 0)
+  }, [selectedIngredients])
 
   return (
     <section className={`${styles.section} mt-25 mr-2`}>
@@ -25,14 +59,14 @@ export default function BurgerConstructor({selectedIngredients}) {
         <h2 className="text text_type_main-large mt-10">Нажмите на ингредиент, откроется его описание и он появится в списке</h2>
       }
      <ul className={styles.list}>
-      {selectedIngredients.bun.name && 
+      {bun.name && 
         <li className="ml-8 mr-4">
           <ConstructorElement
             type="top"
             isLocked={true}
-            text={`${selectedIngredients.bun.name} (верх)`}
-            price={selectedIngredients.bun.price}
-            thumbnail={selectedIngredients.bun.image}
+            text={`${bun.name} (верх)`}
+            price={bun.price}
+            thumbnail={bun.image}
            />
         </li>
       }
@@ -76,7 +110,7 @@ export default function BurgerConstructor({selectedIngredients}) {
       }
       {order && 
         <Modal onClose={onClose}>
-          <OrderDetails />
+          <OrderDetails orderNumber={state.orderNumber}/>
         </Modal>
       }
     </section>

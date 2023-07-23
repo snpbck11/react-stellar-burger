@@ -46,18 +46,18 @@ export default function BurgerIngredients({handleClick, data}) {
         <h2 id="buns" className="text text_type_main-medium">Булки</h2>
         <ul className={`${styles.list} mt-6 ml-4 mr-4 mb-10`}>
           {buns.map((item) => (
-            <Ingredient key={item._id} props={item} handleIngredientClick={onOpen} />
+            <Ingredient key={item._id} ingredient={item} handleIngredientClick={onOpen} />
           ))}
         </ul>
         <h2 id="sauces" className="text text_type_main-medium">Соусы</h2>
         <ul className={`${styles.list} mt-6 ml-4 mr-4 mb-10`}>
           {sauces.map((item) => (
-            <Ingredient key={item._id} props={item} handleIngredientClick={onOpen} />
+            <Ingredient key={item._id} ingredient={item} handleIngredientClick={onOpen} />
           ))}
         <h2 id="main" className="text text_type_main-medium">Начинки</h2>  
         </ul> <ul className={`${styles.list} mt-6 ml-4 mr-4 mb-10`}>
           {main.map((item) => (
-            <Ingredient key={item._id} props={item} handleIngredientClick={onOpen} />
+            <Ingredient key={item._id} ingredient={item} handleIngredientClick={onOpen} />
           ))}
         </ul>
       </div>
