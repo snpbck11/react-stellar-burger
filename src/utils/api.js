@@ -9,4 +9,18 @@ const request = (endpoint, options) => {
   .then(checkResponse)
 }
 
-export default request
+export const getIngredientsData = () => {
+  return request(`/ingredients`)
+}
+
+export const getOrderDetails = (idArray) => {
+  return request('/orders', {
+    method: 'POST',
+    headers:{
+      'Content-Type': 'application/json'
+    }, 
+    body: JSON.stringify({
+      "ingredients": idArray
+    })
+  })
+}

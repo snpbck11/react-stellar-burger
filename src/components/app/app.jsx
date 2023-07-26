@@ -3,7 +3,7 @@ import styles from "./app.module.css";
 import AppHeader from "../app-header/app-header";
 import BurgerIngredients from "../burger-ingredients/burger-ingredients";
 import BurgerConstructor from "../burger-constructor/burger-constructor";
-import request from "../../utils/api";
+import { getIngredientsData } from "../../utils/api";
 import { BurgerContext } from "../../utils/burger-context";
 
 function App() {
@@ -20,18 +20,14 @@ function App() {
   })
 
   useEffect(() => {
-    const getIngredientData = async () => {
-      setState({...state, loading: true})
-      try {
-        request(`/ingredients`)
-        .then((data) => setState({...state, data: data, loading: false, isError: false}))        
-      } catch(err) {
-        setState({...state, isError: true})
-        console.log(`Ошибка ${err}`)
-      }
-    }
-    getIngredientData();
-  }, []);
+    setState({...state, loading: true})
+    getIngredientsData()  
+    .then((data) => setState({...state, data: data.data, loading: false, isError: false}))        
+    .catch((err) => {
+      setState({...state, isError: true})
+      console.log(`Ошибка ${err}`)
+    })        
+    }, []);
 
   const handleClick = (ingredient) => {
     ingredient.type !== 'bun' ? setSelectedIngredients({...selectedIngredients, ingredients: [...selectedIngredients.ingredients, ingredient]}) :
@@ -41,10 +37,10 @@ function App() {
   return (
     <>
       <AppHeader />
-      <BurgerContext.Provider value={selectedIngredients}>
+      <BurgerContext.Provider value={{selectedIngredients, setSelectedIngredients}}>
       {state.isError ? <h1>Произошла ошибка, перезагрузите страницу</h1> : 
         <main className={styles.main}>
-        <BurgerIngredients handleClick={handleClick} data={state.data.data}/>
+        <BurgerIngredients handleClick={handleClick} data={state.data}/>
         <BurgerConstructor />
         </main>
       }

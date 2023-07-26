@@ -1,20 +1,19 @@
-import PropTypes from "prop-types";
 import {useState, useContext, useMemo} from 'react';
 import styles from "./burger-constructor.module.css";
 import { ConstructorElement, DragIcon, CurrencyIcon, Button } from "@ya.praktikum/react-developer-burger-ui-components";
 import Modal from '../modal/modal';
 import OrderDetails from '../order-details/order-details';
 import { BurgerContext } from "../../utils/burger-context";
-import request from "../../utils/api";
+import { getOrderDetails } from "../../utils/api";
 
 export default function BurgerConstructor() {
-  const selectedIngredients = useContext(BurgerContext);
+  const { selectedIngredients, setSelectedIngredients } = useContext(BurgerContext);
   const { bun, ingredients } = selectedIngredients;
   const [order, setOrder] = useState(false);
 
   const [state, setState] = useState({
     orderNumber: null,
-    loading: true,
+    loading: false,
     isError: true
   })
 
@@ -23,27 +22,18 @@ export default function BurgerConstructor() {
   }, [selectedIngredients.bun, selectedIngredients.ingredients])
 
   const onOpen = () => {
-    const getOrderDetails = async () => {
-      setState({...state, loading: true})
-      try {
-        request('/orders', {
-          method: 'POST',
-          headers:{
-            'Content-Type': 'application/json'
-          }, 
-          body: JSON.stringify({
-            "ingredients": ingredientIds
-          })
-        })
-        .then((data) => setState({...state, orderNumber: data.order.number, loading: false, isError: false}))
-        .then(() => setOrder(true))
-      } catch(err) {
-        setState({...state, isError: true})
-        console.log(`Ошибка ${err}`)
-      }
-    }
-    getOrderDetails()
-  }
+    setState({...state, loading: true})
+    setOrder(true)
+    getOrderDetails(ingredientIds) 
+    .then((data) => {
+      setState({...state, orderNumber: data.order.number, loading: false, isError: false})
+      setSelectedIngredients({...selectedIngredients, bun: {}, ingredients: []})
+    })
+    .catch((err) => {
+      setState({...state, isError: true})
+      console.log(`Ошибка ${err}`)
+    })   
+}
 
   const onClose = () => {
     setOrder(false)
@@ -52,6 +42,8 @@ export default function BurgerConstructor() {
   const totalPrice = useMemo(() => {
     return (bun.price ? bun.price*2 : 0) + ingredients.reduce((acc, item) => acc + item.price, 0)
   }, [selectedIngredients])
+
+  const disabled = !bun._id;
 
   return (
     <section className={`${styles.section} mt-25 mr-2`}>
@@ -104,19 +96,15 @@ export default function BurgerConstructor() {
           <p className="text text_type_digits-medium">{totalPrice}</p>
           <CurrencyIcon />
         </div>
-          <Button htmlType="button" type="primary" size="large" onClick={onOpen}>Оформить заказ</Button>
+        <Button htmlType="button" type="primary" size="large" onClick={onOpen} disabled={disabled}>Оформить заказ</Button>
         </div>
         )
       }
       {order && 
         <Modal onClose={onClose}>
-          <OrderDetails orderNumber={state.orderNumber}/>
+          <OrderDetails orderNumber={state.orderNumber} loader={state.loading}/>
         </Modal>
       }
     </section>
   )
-}
-
-BurgerConstructor.propTypes = {
-  selectedIngredients: PropTypes.object
 }

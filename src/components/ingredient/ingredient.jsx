@@ -6,7 +6,7 @@ import { ingredientPropType } from "../../utils/prop-types";
 import { BurgerContext } from "../../utils/burger-context";
 
 export default function Ingredient({ingredient, handleIngredientClick}) {
-  const selectedIngredients = useContext(BurgerContext)
+  const {selectedIngredients} = useContext(BurgerContext)
 
   const count = useMemo(() => {
     const { bun, ingredients } = selectedIngredients;
@@ -14,7 +14,7 @@ export default function Ingredient({ingredient, handleIngredientClick}) {
       return ingredient._id === bun._id ? 2 : 0;
     }
    return ingredients.filter((item) => item._id === ingredient._id).length;
- }, [selectedIngredients]);
+ }, [selectedIngredients.bun, selectedIngredients.ingredients]);
 
   const handleClick = () => {
     handleIngredientClick(ingredient);
