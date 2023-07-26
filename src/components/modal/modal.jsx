@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import {useEffect} from "react";
+import { useEffect } from "react";
 import ReactDOM from "react-dom";
 import styles from "./modal.module.css";
 import ModalOverlay from "../modal-overlay/modal-overlay";
@@ -20,7 +20,7 @@ export default function Modal({children, onClose}) {
   return ReactDOM.createPortal((
     <>
       <ModalOverlay onClose={onClose}/>
-      <div className={styles.modal} onClick={onClose}>
+      <div className={styles.modal}>
         <button className={styles.close} onClick={onClose}>
           <CloseIcon />
         </button>

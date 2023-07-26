@@ -1,23 +1,49 @@
-import PropTypes from "prop-types";
-import {useState} from 'react';
+import {useState, useContext, useMemo} from 'react';
 import styles from "./burger-constructor.module.css";
 import { ConstructorElement, DragIcon, CurrencyIcon, Button } from "@ya.praktikum/react-developer-burger-ui-components";
 import Modal from '../modal/modal';
 import OrderDetails from '../order-details/order-details';
+import { BurgerContext } from "../../utils/burger-context";
+import { getOrderDetails } from "../../utils/api";
 
-export default function BurgerConstructor({selectedIngredients}) {
+export default function BurgerConstructor() {
+  const { selectedIngredients, setSelectedIngredients } = useContext(BurgerContext);
+  const { bun, ingredients } = selectedIngredients;
+  const [order, setOrder] = useState(false);
 
-  const [order, setOrder] = useState(false)
+  const [state, setState] = useState({
+    orderNumber: null,
+    loading: false,
+    isError: true
+  })
+
+  const ingredientIds = useMemo(() => {
+    return ingredients.map(item => item._id).concat(bun._id)
+  }, [selectedIngredients.bun, selectedIngredients.ingredients])
 
   const onOpen = () => {
+    setState({...state, loading: true})
     setOrder(true)
-  }
+    getOrderDetails(ingredientIds) 
+    .then((data) => {
+      setState({...state, orderNumber: data.order.number, loading: false, isError: false})
+      setSelectedIngredients({...selectedIngredients, bun: {}, ingredients: []})
+    })
+    .catch((err) => {
+      setState({...state, isError: true})
+      console.log(`Ошибка ${err}`)
+    })   
+}
 
   const onClose = () => {
     setOrder(false)
   }
    
-  const totalPrice = selectedIngredients.bun.price*2 + selectedIngredients.ingredients.reduce((acc, item) => acc + item.price, 0)
+  const totalPrice = useMemo(() => {
+    return (bun.price ? bun.price*2 : 0) + ingredients.reduce((acc, item) => acc + item.price, 0)
+  }, [selectedIngredients])
+
+  const disabled = !bun._id;
 
   return (
     <section className={`${styles.section} mt-25 mr-2`}>
@@ -25,14 +51,14 @@ export default function BurgerConstructor({selectedIngredients}) {
         <h2 className="text text_type_main-large mt-10">Нажмите на ингредиент, откроется его описание и он появится в списке</h2>
       }
      <ul className={styles.list}>
-      {selectedIngredients.bun.name && 
+      {bun.name && 
         <li className="ml-8 mr-4">
           <ConstructorElement
             type="top"
             isLocked={true}
-            text={`${selectedIngredients.bun.name} (верх)`}
-            price={selectedIngredients.bun.price}
-            thumbnail={selectedIngredients.bun.image}
+            text={`${bun.name} (верх)`}
+            price={bun.price}
+            thumbnail={bun.image}
            />
         </li>
       }
@@ -70,19 +96,15 @@ export default function BurgerConstructor({selectedIngredients}) {
           <p className="text text_type_digits-medium">{totalPrice}</p>
           <CurrencyIcon />
         </div>
-          <Button htmlType="button" type="primary" size="large" onClick={onOpen}>Оформить заказ</Button>
+        <Button htmlType="button" type="primary" size="large" onClick={onOpen} disabled={disabled}>Оформить заказ</Button>
         </div>
         )
       }
       {order && 
         <Modal onClose={onClose}>
-          <OrderDetails />
+          <OrderDetails orderNumber={state.orderNumber} loader={state.loading}/>
         </Modal>
       }
     </section>
   )
-}
-
-BurgerConstructor.propTypes = {
-  selectedIngredients: PropTypes.object
 }
