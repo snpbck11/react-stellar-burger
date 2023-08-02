@@ -14,12 +14,6 @@
   padding: 0;
 }
 
-.element {
-  display: flex;
-  align-items: center;
-  gap: 0 10px;
-}
-
 .order {
   display: flex;
   gap: 0 40px;

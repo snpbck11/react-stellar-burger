@@ -1,52 +1,65 @@
-import {useState, useContext, useMemo} from 'react';
+import { useMemo } from "react";
 import styles from "./burger-constructor.module.css";
-import { ConstructorElement, DragIcon, CurrencyIcon, Button } from "@ya.praktikum/react-developer-burger-ui-components";
-import Modal from '../modal/modal';
-import OrderDetails from '../order-details/order-details';
-import { BurgerContext } from "../../utils/burger-context";
+import { ConstructorElement, CurrencyIcon, Button } from "@ya.praktikum/react-developer-burger-ui-components";
+import DraggableIngredient from "../draggable-ingredient/draggable-ingredient";
+import Modal from "../modal/modal";
+import OrderDetails from "../order-details/order-details";
 import { getOrderDetails } from "../../utils/api";
+import { useSelector, useDispatch } from "react-redux";
+import { addBun, addIngredient, deleteInredient, swapInredient } from "../../services/reducers/burger-constructor";
+import { v4 as uuid } from "uuid";
+import { useDrop } from "react-dnd";
+import { closeOrder, showOrder } from "../../services/reducers/order-details";
 
 export default function BurgerConstructor() {
-  const { selectedIngredients, setSelectedIngredients } = useContext(BurgerContext);
-  const { bun, ingredients } = selectedIngredients;
-  const [order, setOrder] = useState(false);
+  const { bun, ingredients } = useSelector(state => state.burgerConstructor);
+  const { orderNumber, isLoading, isOpen } = useSelector(state => state.orderDetails);
+  const dispatch = useDispatch();
 
-  const [state, setState] = useState({
-    orderNumber: null,
-    loading: false,
-    isError: true
-  })
+  const [, dropRef] = useDrop({
+    accept: "ingredients",
+    drop(item) {
+      onDropHandler(item);
+    }
+  });
+
+  const onDropHandler = (item) => {
+    item.type === "bun" ? dispatch(addBun(item)) : dispatch(addIngredient(item));
+  }
 
   const ingredientIds = useMemo(() => {
-    return ingredients.map(item => item._id).concat(bun._id)
-  }, [selectedIngredients.bun, selectedIngredients.ingredients])
+    return [...ingredients.map(item => item._id), bun._id]
+  }, [bun, ingredients])
 
   const onOpen = () => {
-    setState({...state, loading: true})
-    setOrder(true)
-    getOrderDetails(ingredientIds) 
-    .then((data) => {
-      setState({...state, orderNumber: data.order.number, loading: false, isError: false})
-      setSelectedIngredients({...selectedIngredients, bun: {}, ingredients: []})
-    })
-    .catch((err) => {
-      setState({...state, isError: true})
-      console.log(`Ошибка ${err}`)
-    })   
-}
+    dispatch(showOrder());
+    dispatch(getOrderDetails(ingredientIds));   
+  }
 
   const onClose = () => {
-    setOrder(false)
+    dispatch(closeOrder());
+  }
+
+  const handleDeleteIngredient = (ingredient) => {
+    dispatch(deleteInredient(ingredient));
   }
    
   const totalPrice = useMemo(() => {
     return (bun.price ? bun.price*2 : 0) + ingredients.reduce((acc, item) => acc + item.price, 0)
-  }, [selectedIngredients])
+  }, [bun, ingredients])
 
   const disabled = !bun._id;
 
+ const moveIngredient = (dragIndex, hoverIndex) => {
+  const dragIngredient = ingredients[dragIndex]
+  const newIngredients = [...ingredients]
+  newIngredients.splice(dragIndex, 1)
+  newIngredients.splice(hoverIndex, 0, dragIngredient);
+  dispatch(swapInredient(newIngredients));
+ }
+
   return (
-    <section className={`${styles.section} mt-25 mr-2`}>
+    <section ref={dropRef} className={`${styles.section} pt-25 pr-2`}>
       {totalPrice === 0 && 
         <h2 className="text text_type_main-large mt-10">Нажмите на ингредиент, откроется его описание и он появится в списке</h2>
       }
@@ -63,29 +76,22 @@ export default function BurgerConstructor() {
         </li>
       }
         <li>
-          <ul className={`${styles.list} custom-scroll`} style={{maxHeight: 'calc(100vh - 500px)',
-  overflowY: 'auto'}}>
-          {selectedIngredients.ingredients.map((item, index) => (
-            <li key={index} className={`${styles.element} pr-4`}>
-              <DragIcon />
-              <ConstructorElement
-                text={item.name}
-                price={item.price}
-                thumbnail={item.image}
-              />
-            </li>
-            ))
-          }      
+          <ul className={`${styles.list} custom-scroll`} style={{maxHeight: "calc(100vh - 500px)",
+  overflowY: "auto"}}>
+          {ingredients.map((ingredient, index) => (
+            <DraggableIngredient key={uuid()} id={uuid()} ingredient={ingredient} index={index} handleDeleteIngredient={handleDeleteIngredient} moveIngredient={moveIngredient} />
+           ))
+          } 
           </ul>
         </li>
-        {selectedIngredients.bun.name && 
+        {bun.name && 
           <li className="ml-8 mr-2">
             <ConstructorElement 
               type="bottom"        
               isLocked={true}
-              text={`${selectedIngredients.bun.name} (низ)`}
-              price={selectedIngredients.bun.price}
-              thumbnail={selectedIngredients.bun.image}
+              text={`${bun.name} (низ)`}
+              price={bun.price}
+              thumbnail={bun.image}
             />
           </li>
         }
@@ -100,9 +106,9 @@ export default function BurgerConstructor() {
         </div>
         )
       }
-      {order && 
+      {isOpen && 
         <Modal onClose={onClose}>
-          <OrderDetails orderNumber={state.orderNumber} loader={state.loading}/>
+          <OrderDetails orderNumber={orderNumber} loader={isLoading}/>
         </Modal>
       }
     </section>

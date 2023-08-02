@@ -6,7 +6,7 @@ export default function IngredientDetails({details}) {
 
   return (
     <div className={styles.container}>
-      <h2 className='text text_type_main-large mt-10 mr-10 ml-10' style={{alignSelf: 'flex-start'}}>Детали ингредиента</h2>
+      <h2 className='text text_type_main-large mt-10 mr-10 ml-10'>Детали ингредиента</h2>
       <div className={styles.image}>
         <img src={details.image} alt={`Изображение ${details.name}`} style={{width: '100%'}} />
       </div>
