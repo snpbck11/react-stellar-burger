@@ -6,10 +6,9 @@ import Modal from "../modal/modal";
 import OrderDetails from "../order-details/order-details";
 import { getOrderDetails } from "../../utils/api";
 import { useSelector, useDispatch } from "react-redux";
-import { addBun, addIngredient, deleteInredient, swapInredient } from "../../services/reducers/burger-constructor";
-import { v4 as uuid } from "uuid";
+import { addBun, addIngredient, deleteInredient, swapInredient } from "../../services/actions/burger-constructor";
 import { useDrop } from "react-dnd";
-import { closeOrder, showOrder } from "../../services/reducers/order-details";
+import { closeOrder, showOrder } from "../../services/actions/order-details";
 
 export default function BurgerConstructor() {
   const { bun, ingredients } = useSelector(state => state.burgerConstructor);
@@ -61,9 +60,9 @@ export default function BurgerConstructor() {
   return (
     <section ref={dropRef} className={`${styles.section} pt-25 pr-2`}>
       {totalPrice === 0 && 
-        <h2 className="text text_type_main-large mt-10">Нажмите на ингредиент, откроется его описание и он появится в списке</h2>
+        <h2 className="text text_type_main-large mt-10">Перетащите ингредиенты сюда</h2>
       }
-     <ul className={styles.list}>
+     <ul className={styles.container}>
       {bun.name && 
         <li className="ml-8 mr-4">
           <ConstructorElement
@@ -76,12 +75,11 @@ export default function BurgerConstructor() {
         </li>
       }
         <li>
-          <ul className={`${styles.list} custom-scroll`} style={{maxHeight: "calc(100vh - 500px)",
-  overflowY: "auto"}}>
+          <ul className={`${styles.list} custom-scroll`}>
           {ingredients.map((ingredient, index) => (
-            <DraggableIngredient key={uuid()} id={uuid()} ingredient={ingredient} index={index} handleDeleteIngredient={handleDeleteIngredient} moveIngredient={moveIngredient} />
+            <DraggableIngredient key={ingredient.uniqueId} id={ingredient.uniqueId} ingredient={ingredient} index={index} handleDeleteIngredient={handleDeleteIngredient} moveIngredient={moveIngredient} />
            ))
-          } 
+          }
           </ul>
         </li>
         {bun.name && 

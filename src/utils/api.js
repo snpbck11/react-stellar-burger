@@ -1,6 +1,6 @@
-import { resetConstructor } from "../services/reducers/burger-constructor";
-import { getIngredientsRequest, ingredientsRequestFailed, ingredientsRequestSuccess } from "../services/reducers/ingredients";
-import { getOrderNumber, orderNumberFailed, orderNumberSuccess } from "../services/reducers/order-details";
+import { resetConstructor } from "../services/actions/burger-constructor";
+import { getIngredientsRequest, ingredientsRequestFailed, ingredientsRequestSuccess } from "../services/actions/ingredients";
+import { getOrderNumber, orderNumberFailed, orderNumberSuccess } from "../services/actions/order-details";
 
 
 const baseUrl = "https://norma.nomoreparties.space/api";

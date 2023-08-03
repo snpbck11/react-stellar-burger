@@ -38,9 +38,3 @@ export const orderDetailsReducer = (state = initialState, action) => {
       return state
   }
 }
-
-export const getOrderNumber = () => ({type: GET_ORDER_NUMBER});
-export const orderNumberSuccess = (payload) => ({type: ORDER_NUMBER_SUCCESS, payload});
-export const orderNumberFailed = () => ({type: ORDER_NUMBER_FAILED});
-export const showOrder = () => ({type: SHOW_ORDER_DETAILS});
-export const closeOrder = () => ({type: CLOSE_ORDER_DETAILS});

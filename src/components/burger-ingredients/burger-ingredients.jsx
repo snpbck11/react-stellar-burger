@@ -6,7 +6,7 @@ import IngredientDetails from "../ingredient-details/ingredient-details";
 import Modal from "../modal/modal";
 import { getIngredients } from "../../utils/api";
 import { useDispatch, useSelector } from "react-redux";
-import { closeIngredientDetails, showIngredientDetails } from "../../services/reducers/ingredient-details";
+import { closeIngredientDetails, showIngredientDetails } from "../../services/actions/ingredient-details";
 import { useInView } from "react-intersection-observer";
  
 export default function BurgerIngredients() {
@@ -36,7 +36,9 @@ export default function BurgerIngredients() {
   
   useEffect(() => {
     window.addEventListener('scroll', setTabFromScroll);
-    return window.removeEventListener('scroll', setTabFromScroll);
+    return () => {
+      window.removeEventListener('scroll', setTabFromScroll);
+    }
   }, [setTabFromScroll]);
 
   useEffect(() => {

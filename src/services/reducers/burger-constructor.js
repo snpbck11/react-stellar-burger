@@ -47,9 +47,3 @@ export const constructorReducer = (state = initalState, action) => {
       return state
   }
 }
-
-export const addBun = (payload) => ({type: ADD_BUN, payload});
-export const addIngredient = (payload) => ({type: ADD_INGREDIENT, payload});
-export const deleteInredient = (payload) => ({type: DELETE_INGREDIENT, payload});
-export const resetConstructor = () => ({type: RESET_CONSTRUCTOR});
-export const swapInredient = (payload) => ({type: SWAP_INGREDIENT, payload});

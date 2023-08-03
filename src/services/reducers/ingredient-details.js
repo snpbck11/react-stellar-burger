@@ -22,6 +22,3 @@ export const ingredeintDetailsReducer = (state = initalState, action) => {
       return state
   }
 }
-
-export const showIngredientDetails = (payload) => ({type: SHOW_INGREDIENT_DETAILS, payload});
-export const closeIngredientDetails = () => ({type: CLOSE_INGREDIENT_DETAILS});
