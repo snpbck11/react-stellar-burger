@@ -4,20 +4,19 @@
   flex-direction: column;
 }
 
-.list {
+.container {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  flex-grow: 1;
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
 
-.element {
-  display: flex;
-  align-items: center;
-  gap: 0 10px;
+.list {
+  composes: container;
+  max-height: calc(100vh - 500px);
+  overflow-y: auto
 }
 
 .order {

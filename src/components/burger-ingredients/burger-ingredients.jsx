@@ -1,38 +1,69 @@
-import PropTypes from "prop-types";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import styles from "./burger-ingredients.module.css";
 import Ingredient from "../ingredient/ingredient";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components"
 import IngredientDetails from "../ingredient-details/ingredient-details";
 import Modal from "../modal/modal";
-import { ingredientPropType } from "../../utils/prop-types"
+import { getIngredients } from "../../utils/api";
+import { useDispatch, useSelector } from "react-redux";
+import { closeIngredientDetails, showIngredientDetails } from "../../services/actions/ingredient-details";
+import { useInView } from "react-intersection-observer";
  
-export default function BurgerIngredients({handleClick, data}) {
-
-  const [ingredient, setIngredient] = useState(null);
-  
+export default function BurgerIngredients() {
   const [current, setCurrent] = useState('buns');
+  const { ingredients } = useSelector(state => state.ingredients);
+  const { ingredientDetails } = useSelector(state => state.ingredientDetails);
+  const dispatch = useDispatch();
+
+  const {ref: bunRef, inView: bunInView } = useInView({
+    threshold: 0
+  })
+
+  const {ref: sauceRef, inView: sauceInView } = useInView({
+    threshold: 0
+  })
+
+  const {ref: mainRef, inView: mainInView } = useInView({
+    threshold: 0
+  })
+
+  const setTabFromScroll = useMemo(() => {
+    bunInView ? setCurrent('buns') 
+    : sauceInView ? setCurrent('sauces') 
+    : mainInView ? setCurrent('main') 
+    : setCurrent('buns')
+  }, [bunInView, sauceInView, mainInView])
+  
+  useEffect(() => {
+    window.addEventListener('scroll', setTabFromScroll);
+    return () => {
+      window.removeEventListener('scroll', setTabFromScroll);
+    }
+  }, [setTabFromScroll]);
+
+  useEffect(() => {
+    dispatch(getIngredients());
+  }, [dispatch]);
 
   const onOpen = (item) => {
-    handleClick(item);
-    setIngredient(item);
+    dispatch(showIngredientDetails(item));
   }
 
   const onClose = () => {
-    setIngredient(null)
+    dispatch(closeIngredientDetails());
   }
 
   const setTab = (tab) => {
-    setCurrent(tab)
-    const element = document.getElementById(tab)
+    setCurrent(tab);
+    const element = document.getElementById(tab);
     if (element) {
-     return element.scrollIntoView({behavior: 'smooth'})
+     return element.scrollIntoView({behavior: 'smooth'});
     }
   }
   
-  const buns = useMemo(() => data.filter((item) => item.type === 'bun'), [data])
-  const sauces = useMemo(() => data.filter((item) => item.type === 'sauce'), [data])
-  const main = useMemo(() => data.filter((item) => item.type === 'main'), [data])
+  const buns = useMemo(() => ingredients.filter((item) => item.type === 'bun'), [ingredients]);
+  const sauces = useMemo(() => ingredients.filter((item) => item.type === 'sauce'), [ingredients]);
+  const main = useMemo(() => ingredients.filter((item) => item.type === 'main'), [ingredients]);
 
   return(
     <section className={styles.section}>
@@ -44,31 +75,27 @@ export default function BurgerIngredients({handleClick, data}) {
       </div>
       <div className={`${styles.container} custom-scroll`}>
         <h2 id="buns" className="text text_type_main-medium">Булки</h2>
-        <ul className={`${styles.list} mt-6 ml-4 mr-4 mb-10`}>
+        <ul ref={bunRef} className={`${styles.list} mt-6 ml-4 mr-4 mb-10`}>
           {buns.map((item) => (
             <Ingredient key={item._id} ingredient={item} handleIngredientClick={onOpen} />
           ))}
         </ul>
         <h2 id="sauces" className="text text_type_main-medium">Соусы</h2>
-        <ul className={`${styles.list} mt-6 ml-4 mr-4 mb-10`}>
+        <ul ref={sauceRef} className={`${styles.list} mt-6 ml-4 mr-4 mb-10`}>
           {sauces.map((item) => (
             <Ingredient key={item._id} ingredient={item} handleIngredientClick={onOpen} />
           ))}
+        </ul> 
         <h2 id="main" className="text text_type_main-medium">Начинки</h2>  
-        </ul> <ul className={`${styles.list} mt-6 ml-4 mr-4 mb-10`}>
+        <ul ref={mainRef} className={`${styles.list} mt-6 ml-4 mr-4 mb-10`}>
           {main.map((item) => (
             <Ingredient key={item._id} ingredient={item} handleIngredientClick={onOpen} />
           ))}
         </ul>
       </div>
-      {ingredient && <Modal onClose={onClose}>
-          <IngredientDetails details={ingredient} />
+      {ingredientDetails && <Modal onClose={onClose}>
+          <IngredientDetails details={ingredientDetails} />
         </Modal>}
     </section>
   )
-}
-
-BurgerIngredients.propTypes = {
-  data: PropTypes.arrayOf(ingredientPropType),
-  handleClick: PropTypes.func
 }
