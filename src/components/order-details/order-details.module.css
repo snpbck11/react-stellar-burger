@@ -3,3 +3,7 @@
   flex-direction: column;
   align-items: center;
 }
+
+.loader {
+  min-height: 106px;
+}
