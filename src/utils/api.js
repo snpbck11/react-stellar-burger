@@ -14,6 +14,10 @@ const request = (endpoint, options) => {
   .then(checkResponse)
 }
 
+export const getUser = () => {
+  return request('')
+}
+
 export const getIngredientsData = () => {
   return request(`/ingredients`)
 }
@@ -55,4 +59,43 @@ export const getOrderDetails = (idArray) => {
       console.log(`Ошибка ${err}`);
     });
   }
+}
+
+export const forgotPaswordRequest = (email) => {
+  return request('/password-reset', {
+    method: 'POST',
+    headers:{
+      'Content-Type': 'application/json'
+    }, 
+    body: JSON.stringify({
+      "email": email
+    })
+  })
+};
+
+export const resetPassword = (form) => {
+  return request('/password-reset/reset', {
+    method: 'POST',
+    headers:{
+      'Content-Type': 'application/json'
+    }, 
+    body: JSON.stringify({
+      "password": form.password,
+      "token": form.token
+    })
+  })
+};
+
+export const getRegister = (user) => {
+  return request('/auth/register', {
+    method: 'POST',
+    headers:{
+      'Content-Type': 'application/json'
+    }, 
+    body: JSON.stringify({
+      "email": user.email,
+      "password": user.password,
+      "name": user.name
+    })
+  })
 }

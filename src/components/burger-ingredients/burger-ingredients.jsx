@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import styles from "./burger-ingredients.module.css";
 import Ingredient from "../ingredient/ingredient";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components"
@@ -41,9 +41,16 @@ export default function BurgerIngredients() {
     }
   }, [setTabFromScroll]);
 
+  const loadIngredients = useCallback(
+    () => {
+      dispatch(getIngredients());
+    }, [ingredients]
+  );
+
   useEffect(() => {
-    dispatch(getIngredients());
-  }, [dispatch]);
+    loadIngredients();
+    console.log(ingredients)
+  }, []);
 
   const onOpen = (item) => {
     dispatch(showIngredientDetails(item));
@@ -66,7 +73,7 @@ export default function BurgerIngredients() {
   const main = useMemo(() => ingredients.filter((item) => item.type === 'main'), [ingredients]);
 
   return(
-    <section className={styles.section}>
+    <section className={styles.wrpapper}>
       <h1 className="text text_type_main-large mt-10 mb-5">Соберите бургер</h1>
       <div style={{display: "flex"}} className="mb-10">
         <Tab value="buns" active={current === "buns"} onClick={setTab}>Булки</Tab>

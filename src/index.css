@@ -1,3 +1,13 @@
 body {
   margin: 0;
 }
+
+.text_color_interface {
+  color: #4C4CFF;
+  transition: opacity .3s ease;
+}
+
+.text_color_interface:hover {
+  opacity: .5;
+  cursor: pointer;
+}
