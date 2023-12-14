@@ -17,7 +17,7 @@ export const ingredientsReducer = (state = initalState, action) => {
       return {...state, isLoading: true, ingredientsRequest: true, ingredientsFailed: false}
     }
     case GET_INGREDIENTS_SUCCESS: {
-      return {...state, isLoading: false, ingredientsRequest: false, ingredientsFailed: false, ingredients: [...state.ingredients, ...action.payload] }
+      return {...state, isLoading: false, ingredientsRequest: false, ingredientsFailed: false, ingredients: action.payload }
     }
     case GET_INGREDIENTS_FAILED: {
       return {...state, ingredientsFailed: true, isLoading: false}

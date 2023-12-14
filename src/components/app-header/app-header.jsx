@@ -1,30 +1,35 @@
 import styles from "./app-header.module.css";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Logo, BurgerIcon, ListIcon, ProfileIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 
 export default function AppHeader() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isConstructor = location.pathname === "/";
+  const isFeed = location.pathname.includes("/feed");
+  const isProfile = location.pathname.includes("/profile") 
 
   return(
     <header className={styles.header}>
       <div className={styles.container}>
-        <ul className={styles.list}>
-          <li className={`${styles.link} mt-4 mb-4 mr-5`} onClick={() => navigate("/")}>
-              <BurgerIcon />
+        <nav className={styles.list}>
+          <NavLink to="/" className={`${styles.link} link mt-4 mb-4 mr-5 text_color_inactive`} onClick={() => navigate("/")}>
+              <BurgerIcon type={!isConstructor ? "secondary" : "primary"} />
               <p className="text text_type_main-default">Конструктор</p>
-          </li>
-          <li className={`${styles.link} mt-4 mb-4 mr-5 ml-5`} onClick={() => navigate("/feed")}>
-              <ListIcon />
+          </NavLink>
+          <NavLink to="/feed" className={`${styles.link} link mt-4 mb-4 mr-5 ml-5 text_color_inactive`} onClick={() => navigate("/feed")}>
+              <ListIcon type={!isFeed ? "secondary" : "primary"} />
               <p className="text text_type_main-default">Лента заказов</p>
-          </li>
-        </ul>
+          </NavLink>
+        </nav>
         <div className={styles.logo}>
           <Logo />
         </div>
-        <div className={`${styles.link} mt-4 mb-4 ml-5`} onClick={() => navigate("/profile")}>
-          <ProfileIcon />
+        <NavLink to="/profile" className={`${styles.link} link mt-4 mb-4 ml-5 text_color_inactive`} onClick={() => navigate("/profile")}>
+          <ProfileIcon type={!isProfile ? "secondary" : "primary"} />
           <p className="text text_type_main-default">Личный кабинет</p>
-        </div>
+        </NavLink>
       </div>
     </header>
   )

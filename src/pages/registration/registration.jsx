@@ -1,40 +1,26 @@
 import styles from "./registration.module.css";
 import { Button, EmailInput, PasswordInput, Input} from "@ya.praktikum/react-developer-burger-ui-components";
-import { useNavigate, useLocation } from "react-router-dom";
-import { getRegister } from "../../utils/api";
+import { useNavigate } from "react-router-dom";
 import { useState, useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { setUser, setAuthChecked } from "../../services/actions/user";
+import { register } from "../../services/actions/user";
 
 export default function Registration() {
-  const [form, setForm] = useState({name: "", email: "", password: ""});
+  const [user, setUser] = useState({name: "", email: "", password: ""});
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation()
-
-  let errMessage = '';
 
   const onChange = (e) => {
-    setForm({...form, [e.target.name]: e.target.value});
+    setUser({...user, [e.target.name]: e.target.value});
   };
 
   const submitForm = useCallback(
     (e) => {
       e.preventDefault();
-      getRegister(form)
-      .then((res) => {
-        if (res.success) {
-          dispatch(setAuthChecked(true));
-          dispatch(setUser(res.user));
-          console.log(`${location} локация регистрации`)
-          // Куда-то нужно сунуть токен
-        }
-      })
-      .then(() => navigate("/login"))
-    }, [form]
-  ) 
-
-
+      dispatch(register(user));
+      setUser({name: "", email: "", password: ""});
+    }, [user]
+  );
 
   return (
     <div className={styles.container}>
@@ -46,16 +32,16 @@ export default function Registration() {
             errorText={'Ошибка'}
             size={'default'}
             name="name"
-            value={form.name}
+            value={user.name}
             onChange={onChange}
             />
           <EmailInput 
             name="email"
-            value={form.email}
+            value={user.email}
             onChange={onChange}/>
           <PasswordInput 
             name="password"
-            value={form.password}
+            value={user.password}
             onChange={onChange}/>
           <Button htmlType="submit" type="primary" size="large" extraClass="ml-2" onClick={submitForm}>Зарегистрироваться</Button>
       </form>

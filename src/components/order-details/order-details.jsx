@@ -22,5 +22,6 @@ export default function OrderDetails({orderNumber, loader}) {
 }
 
 OrderDetails.propTypes = {
-  orderNumber: PropTypes.number
+  orderNumber: PropTypes.number,
+  loader: PropTypes.bool
 }

@@ -24,12 +24,6 @@
 .link {
   display: flex;
   gap: 0 8px;
-  cursor: pointer;
-  transition: opacity .3s ease;
-}
-
-.link:hover {
-  opacity: .5;
 }
 
 .logo {

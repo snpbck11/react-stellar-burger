@@ -7,32 +7,28 @@ const baseUrl = "https://norma.nomoreparties.space/api";
 
 const checkResponse = (res) => {
   return res.ok ? res.json() : res.json().then((err) => Promise.reject(err))
-}
+};
 
 const request = (endpoint, options) => {
   return fetch(`${baseUrl}${endpoint}`, options)
   .then(checkResponse)
-}
-
-export const getUser = () => {
-  return request('')
-}
+};
 
 export const getIngredientsData = () => {
   return request(`/ingredients`)
-}
+};
 
 export const getOrderNumberRequest = (idArray) => {
   return request('/orders', {
     method: 'POST',
-    headers:{
-      'Content-Type': 'application/json'
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
     }, 
     body: JSON.stringify({
       "ingredients": idArray
     })
   })
-}
+};
 
 export const getIngredients = () => {
   return dispatch => {
@@ -44,7 +40,7 @@ export const getIngredients = () => {
       console.log(`Ошибка ${err}`);
     })        
   }
-}
+};
 
 export const getOrderDetails = (idArray) => {
   return dispatch => {
@@ -59,13 +55,13 @@ export const getOrderDetails = (idArray) => {
       console.log(`Ошибка ${err}`);
     });
   }
-}
+};
 
 export const forgotPaswordRequest = (email) => {
   return request('/password-reset', {
     method: 'POST',
-    headers:{
-      'Content-Type': 'application/json'
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
     }, 
     body: JSON.stringify({
       "email": email
@@ -76,8 +72,8 @@ export const forgotPaswordRequest = (email) => {
 export const resetPassword = (form) => {
   return request('/password-reset/reset', {
     method: 'POST',
-    headers:{
-      'Content-Type': 'application/json'
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
     }, 
     body: JSON.stringify({
       "password": form.password,
@@ -86,11 +82,11 @@ export const resetPassword = (form) => {
   })
 };
 
-export const getRegister = (user) => {
+export const getUserRegister = (user) => {
   return request('/auth/register', {
     method: 'POST',
-    headers:{
-      'Content-Type': 'application/json'
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
     }, 
     body: JSON.stringify({
       "email": user.email,
@@ -99,3 +95,86 @@ export const getRegister = (user) => {
     })
   })
 }
+
+export const getUserLogin = (user) => {
+  return request('/auth/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: JSON.stringify({
+      "email": user.email,
+      "password": user.password
+    })
+  })
+}
+
+export const getUserLogout = () => {
+  return request('/auth/logout', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: JSON.stringify({
+      "token": localStorage.getItem("refreshToken")
+    })
+  })
+}
+
+const refreshToken = () => {
+  return request('/auth/token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: JSON.stringify({
+      "token": localStorage.getItem("refreshToken")
+    })
+  })
+};
+
+const fetchWithRefresh = async (url, options) => {
+  try {
+    const res = await fetch(url, options);
+    return await checkResponse(res);
+  } catch (err) {
+    if (err.message === "jwt expired") {
+      const refreshData = await refreshToken();
+      if (!refreshData.success) {
+        return Promise.reject(refreshData);
+      }
+      localStorage.setItem("refreshToken", refreshData.refreshToken);
+      localStorage.setItem("accessToken", refreshData.accessToken);
+      options.headers.authorization = refreshData.accessToken;
+      const res = await fetch(url, options);
+      return await checkResponse(res);
+    } else {
+      return Promise.reject(err);
+    }
+  }
+};
+
+export const getUserData = () => {
+  return fetchWithRefresh(`${baseUrl}/auth/user`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+      authorization: localStorage.getItem("accessToken")
+    }
+  })
+};
+
+export const updateUserData = (user) => {
+  return fetchWithRefresh(`${baseUrl}/auth/user`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+      authorization: localStorage.getItem("accessToken")
+    },
+    body: JSON.stringify({
+      "email": user.email,
+      "name": user.name,
+      "password": user.password
+    })
+  })
+};

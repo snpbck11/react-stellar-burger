@@ -1,18 +1,15 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect } from "react";
 import styles from "./burger-ingredients.module.css";
 import Ingredient from "../ingredient/ingredient";
-import { Tab } from "@ya.praktikum/react-developer-burger-ui-components"
-import IngredientDetails from "../ingredient-details/ingredient-details";
-import Modal from "../modal/modal";
-import { getIngredients } from "../../utils/api";
+import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import { useDispatch, useSelector } from "react-redux";
-import { closeIngredientDetails, showIngredientDetails } from "../../services/actions/ingredient-details";
 import { useInView } from "react-intersection-observer";
+import { getIngredients } from "../../utils/api";
  
 export default function BurgerIngredients() {
   const [current, setCurrent] = useState('buns');
   const { ingredients } = useSelector(state => state.ingredients);
-  const { ingredientDetails } = useSelector(state => state.ingredientDetails);
+
   const dispatch = useDispatch();
 
   const {ref: bunRef, inView: bunInView } = useInView({
@@ -41,25 +38,7 @@ export default function BurgerIngredients() {
     }
   }, [setTabFromScroll]);
 
-  const loadIngredients = useCallback(
-    () => {
-      dispatch(getIngredients());
-    }, [ingredients]
-  );
-
-  useEffect(() => {
-    loadIngredients();
-    console.log(ingredients)
-  }, []);
-
-  const onOpen = (item) => {
-    dispatch(showIngredientDetails(item));
-  }
-
-  const onClose = () => {
-    dispatch(closeIngredientDetails());
-  }
-
+  
   const setTab = (tab) => {
     setCurrent(tab);
     const element = document.getElementById(tab);
@@ -67,6 +46,10 @@ export default function BurgerIngredients() {
      return element.scrollIntoView({behavior: 'smooth'});
     }
   }
+
+  useEffect(() => {
+    dispatch(getIngredients());
+  }, []);
   
   const buns = useMemo(() => ingredients.filter((item) => item.type === 'bun'), [ingredients]);
   const sauces = useMemo(() => ingredients.filter((item) => item.type === 'sauce'), [ingredients]);
@@ -84,25 +67,22 @@ export default function BurgerIngredients() {
         <h2 id="buns" className="text text_type_main-medium">Булки</h2>
         <ul ref={bunRef} className={`${styles.list} mt-6 ml-4 mr-4 mb-10`}>
           {buns.map((item) => (
-            <Ingredient key={item._id} ingredient={item} handleIngredientClick={onOpen} />
+            <Ingredient key={item._id} ingredient={item} />
           ))}
         </ul>
         <h2 id="sauces" className="text text_type_main-medium">Соусы</h2>
         <ul ref={sauceRef} className={`${styles.list} mt-6 ml-4 mr-4 mb-10`}>
           {sauces.map((item) => (
-            <Ingredient key={item._id} ingredient={item} handleIngredientClick={onOpen} />
+            <Ingredient key={item._id} ingredient={item} />
           ))}
         </ul> 
         <h2 id="main" className="text text_type_main-medium">Начинки</h2>  
         <ul ref={mainRef} className={`${styles.list} mt-6 ml-4 mr-4 mb-10`}>
           {main.map((item) => (
-            <Ingredient key={item._id} ingredient={item} handleIngredientClick={onOpen} />
+            <Ingredient key={item._id} ingredient={item} />
           ))}
         </ul>
       </div>
-      {ingredientDetails && <Modal onClose={onClose}>
-          <IngredientDetails details={ingredientDetails} />
-        </Modal>}
     </section>
   )
 }

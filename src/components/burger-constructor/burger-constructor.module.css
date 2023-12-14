@@ -24,7 +24,6 @@
   display: flex;
   gap: 0 40px;
   align-self: flex-end;
-  align-items: center;
 }
 
 .price {
