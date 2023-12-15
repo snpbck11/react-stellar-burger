@@ -14,19 +14,19 @@ export default function AppHeader() {
     <header className={styles.header}>
       <div className={styles.container}>
         <nav className={styles.list}>
-          <NavLink to="/" className={`${styles.link} link mt-4 mb-4 mr-5 text_color_inactive`} onClick={() => navigate("/")}>
+          <NavLink to="/" className={`${styles.link} link mt-4 mb-4 mr-5 text_color_inactive`}>
               <BurgerIcon type={!isConstructor ? "secondary" : "primary"} />
               <p className="text text_type_main-default">Конструктор</p>
           </NavLink>
-          <NavLink to="/feed" className={`${styles.link} link mt-4 mb-4 mr-5 ml-5 text_color_inactive`} onClick={() => navigate("/feed")}>
+          <NavLink to="/feed" className={`${styles.link} link mt-4 mb-4 mr-5 ml-5 text_color_inactive`}>
               <ListIcon type={!isFeed ? "secondary" : "primary"} />
               <p className="text text_type_main-default">Лента заказов</p>
           </NavLink>
         </nav>
-        <div className={styles.logo}>
+        <div className={`${styles.logo} link`} onClick={() => navigate("/")}>
           <Logo />
         </div>
-        <NavLink to="/profile" className={`${styles.link} link mt-4 mb-4 ml-5 text_color_inactive`} onClick={() => navigate("/profile")}>
+        <NavLink to="/profile" className={`${styles.link} link mt-4 mb-4 ml-5 text_color_inactive`}>
           <ProfileIcon type={!isProfile ? "secondary" : "primary"} />
           <p className="text text_type_main-default">Личный кабинет</p>
         </NavLink>

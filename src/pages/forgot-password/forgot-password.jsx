@@ -17,7 +17,7 @@ export default function ForgotPassword() {
     e => {
       e.preventDefault();
       forgotPaswordRequest(email)
-      .then(res => res.success ? navigate("/reset-password") : null)
+      .then(() => navigate("/reset-password", {state: {from: "/forgot-password"}}))
     }, [email]
   );
 

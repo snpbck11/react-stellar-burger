@@ -6,12 +6,17 @@ import { getOrderNumber, orderNumberFailed, orderNumberSuccess } from "../servic
 const baseUrl = "https://norma.nomoreparties.space/api";
 
 const checkResponse = (res) => {
-  return res.ok ? res.json() : res.json().then((err) => Promise.reject(err))
+  return res.ok ? res.json() : Promise.reject(`Ошибка ${res.status}`);
+};
+
+const checkSuccess = (res) => {
+  return res && res.success ? res : Promise.reject(`Ответ не success: ${res.success}`);
 };
 
 const request = (endpoint, options) => {
   return fetch(`${baseUrl}${endpoint}`, options)
   .then(checkResponse)
+  .then(checkSuccess)
 };
 
 export const getIngredientsData = () => {
@@ -37,7 +42,7 @@ export const getIngredients = () => {
     .then((res) => dispatch(ingredientsRequestSuccess(res.data)))
     .catch((err) => {
       dispatch(ingredientsRequestFailed());
-      console.log(`Ошибка ${err}`);
+      console.log(err);
     })        
   }
 };
@@ -52,7 +57,7 @@ export const getOrderDetails = (idArray) => {
     })
     .catch((err) => {
       dispatch(orderNumberFailed());
-      console.log(`Ошибка ${err}`);
+      console.log(err);
     });
   }
 };

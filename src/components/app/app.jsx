@@ -15,12 +15,15 @@ import IngredientDetails from "../ingredient-details/ingredient-details";
 
 import { useEffect } from "react";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { checkUserAuth } from "../../services/actions/user";
+import { getIngredients } from "../../utils/api";
 
 function App() {
+
+  const ingredients = useSelector(store => store.ingredients.ingredients);
 
   const dispatch = useDispatch();
   const location = useLocation();
@@ -35,34 +38,40 @@ function App() {
     dispatch(checkUserAuth());
   }, []);
 
+  useEffect(() => {
+      dispatch(getIngredients());
+  }, []);
+
   return (
     <>
-      <AppHeader />
-      <Routes location={background || location}>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<OnlyUnAuth component={<Login />} />} />
-        <Route path="/register" element={<OnlyUnAuth component={<Registration />} />} />
-        <Route path="/forgot-password" element={<OnlyUnAuth component={<ForgotPassword />} />} />
-        <Route path="/reset-password" element={<OnlyUnAuth component={<ResetPassword />} />} />
-        <Route path="/profile" element={<OnlyAuth component={<Profile />} />} >
-          <Route path="/profile/orders" element={<OnlyAuth component={<OrderFeed />} />} />
-          <Route path="/profile/" element={<OnlyAuth component={<Edit />} />} />
-        </Route>
-        <Route path="/profile/orders/:number" element={<OnlyAuth component={<OrderInfo />} />} />
-        <Route path="/feed" element={<Feed />} />
-        <Route path="/feed/:number" element={<OrderInfo />} />
-        <Route path="/ingredients/:id" element={<IngredientDetails />} />
-        <Route path="*" element={<p>Страница не существует</p>} />
-      </Routes>
-      <Routes>
-        { background && (
-          <>
-            <Route path="/ingredients/:id" element={<Modal onClose={handleCloseModal}><IngredientDetails /></Modal>} />
-            <Route path="/profile/orders/:number"element={<OnlyAuth component={<Modal onClose={handleCloseModal}><OrderInfo /></Modal>} />} />
-            <Route path="/feed/:number" element={<Modal onClose={handleCloseModal}><OrderInfo /></Modal>} />
-          </>
-        )}
-      </Routes>
+      {ingredients.length > 0 && (
+        <>
+          <AppHeader />
+          <Routes location={background || location}>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<OnlyUnAuth component={<Login />} />} />
+            <Route path="/register" element={<OnlyUnAuth component={<Registration />} />} />
+            <Route path="/forgot-password" element={<OnlyUnAuth component={<ForgotPassword />} />} />
+            <Route path="/reset-password" element={<OnlyUnAuth component={<ResetPassword />} />} />
+            <Route path="/profile" element={<OnlyAuth component={<Profile />} />} >
+              <Route path="/profile/orders" element={<OnlyAuth component={<OrderFeed />} />} />
+              <Route path="/profile/" element={<OnlyAuth component={<Edit />} />} />
+            </Route>
+            <Route path="/profile/orders/:number" element={<OnlyAuth component={<OrderInfo />} />} />
+            <Route path="/feed" element={<Feed />} />
+            <Route path="/feed/:number" element={<OrderInfo />} />
+            <Route path="/ingredients/:id" element={<IngredientDetails />} />
+            <Route path="*" element={<p>Страница не существует</p>} />
+          </Routes>
+          { background && (
+            <Routes>
+              <Route path="/ingredients/:id" element={<Modal onClose={handleCloseModal}><IngredientDetails /></Modal>} />
+              <Route path="/profile/orders/:number"element={<OnlyAuth component={<Modal onClose={handleCloseModal}><OrderInfo /></Modal>} />} />
+              <Route path="/feed/:number" element={<Modal onClose={handleCloseModal}><OrderInfo /></Modal>} />
+            </Routes>
+          )}
+        </>
+      )}
     </>
   );
 }

@@ -11,7 +11,8 @@ export const getUser = () => {
     return getUserData()
       .then((res) => {
         dispatch(setUser(res.user));
-      });
+      })
+      .catch(err => console.log(err))
   };
 };
 
@@ -25,7 +26,8 @@ export const register = (user) => {
         localStorage.setItem("accessToken", res.accessToken);
         localStorage.setItem("refreshToken", res.refreshToken);
       };
-    });
+    })
+    .catch(err => console.log(err))
   };
 };
 
@@ -33,26 +35,24 @@ export const login = (user) => {
   return (dispatch) => {
     return getUserLogin(user)
     .then((res) => {
-      if (res.success) {
         dispatch(setAuthChecked(true));
         dispatch(setUser(res.user));
         localStorage.setItem("accessToken", res.accessToken);
         localStorage.setItem("refreshToken", res.refreshToken)
-      };
-    });
+    })
+    .catch(err => console.log(err))
   };
 };
 
 export const logout = () => {
   return (dispatch) => {
     return getUserLogout()
-    .then((res) => {
-      if (res.success) {
+    .then(() => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         dispatch(setUser(null));
-      };
-    });
+    })
+    .catch(err => console.log(err))
   };
 }
 
@@ -60,10 +60,11 @@ export const checkUserAuth = () => {
   return (dispatch) => {
     if (localStorage.getItem("accessToken")) {
       dispatch(getUser())
-      .catch(() => {
+      .catch((err) => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         dispatch(setUser(null));
+        console.log(err);
       })
       .finally(() => dispatch(setAuthChecked(true)));
     } else {
@@ -80,5 +81,6 @@ export const updateData = (user) => {
           dispatch(setUser(res.user))
         }
       })
+      .catch(err => console.log(err))
   };
 };

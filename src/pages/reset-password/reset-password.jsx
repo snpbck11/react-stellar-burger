@@ -2,13 +2,14 @@ import styles from "./reset-password.module.css";
 import { Button, Input, PasswordInput } from "@ya.praktikum/react-developer-burger-ui-components";
 import { resetPassword } from "../../utils/api";
 
-import { useState, useCallback } from 'react';
-import { useNavigate } from "react-router";
+import { useState, useCallback, useEffect } from 'react';
+import { useLocation, useNavigate } from "react-router";
 
 export default function ResetPassword() {
   const [form, setForm] = useState({password: "", token: ""});
   const [error, setError] = useState({success: false, message: ''});
 
+  const location = useLocation();
   const navigate = useNavigate();
 
   const onChange = (e) => {
@@ -25,8 +26,12 @@ export default function ResetPassword() {
         }
       })
       .catch((err) => setError({success: !err.success, message: err.message}))
-    }, [form]
+    }, [form, navigate]
   );
+
+  useEffect(() => {
+    return location.state?.from !== "/forgot-password" ? navigate("/") : null
+  }, []);
 
   return (
     <div className={styles.container}>

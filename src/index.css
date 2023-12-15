@@ -12,6 +12,7 @@ body {
 
 .text_color_interface {
   color: #4C4CFF;
+  transition: color .3s ease;
 }
 
 .text_color_interface:hover {

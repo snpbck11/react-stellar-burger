@@ -1,8 +1,7 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import styles from './ingredient-details.module.css';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState, useCallback } from 'react';
-import { getIngredients } from '../../utils/api';
 
 export default function IngredientDetails() {
 
@@ -12,7 +11,6 @@ export default function IngredientDetails() {
 
   const { id } = useParams();
 
-  const dispatch = useDispatch();
 
   const loadIngredientInfo = useCallback(
     () => {
@@ -22,12 +20,7 @@ export default function IngredientDetails() {
   );
 
   useEffect(() => {
-    if (ingredients.length === 0) {
-      dispatch(getIngredients())
-      
-    } else {
-      loadIngredientInfo()
-    }
+    loadIngredientInfo()
   }, [loadIngredientInfo, ingredients]);
 
   return (
