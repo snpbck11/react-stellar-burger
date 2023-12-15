@@ -24,7 +24,7 @@ export default function Registration() {
 
   return (
     <div className={styles.container}>
-      <form className={styles.form}>
+      <form className={styles.form} onSubmit={submitForm}>
         <h1 className="text text_type_main-large">Регистрация</h1>
           <Input type={'text'}
             placeholder={'Имя'}
@@ -43,7 +43,7 @@ export default function Registration() {
             name="password"
             value={user.password}
             onChange={onChange}/>
-          <Button htmlType="submit" type="primary" size="large" extraClass="ml-2" onClick={submitForm}>Зарегистрироваться</Button>
+          <Button htmlType="submit" type="primary" size="large" extraClass="ml-2">Зарегистрироваться</Button>
       </form>
       <div className={styles.choices}>
         <p className="text text_type_main-default text_color_inactive">Уже зарегестрированы? <span className="text_color_interface" onClick={() => navigate("/login")}>Войти</span></p>

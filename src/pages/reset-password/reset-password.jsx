@@ -35,11 +35,11 @@ export default function ResetPassword() {
 
   return (
     <div className={styles.container}>
-      <form className={styles.form}>
+      <form className={styles.form} onSubmit={submitForm}>
         <h1 className="text text_type_main-large">Восстановление пароля</h1>
           <PasswordInput placeholder={'Введите новый пароль'} name="password" value={form.password} onChange={onChange} />
           <Input placeholder={'Введите код из письма'} name="token" value={form.token} onChange={onChange} error={error.success} errorText={error.message}/>
-          <Button htmlType="submit" type="primary" size="large" extraClass="ml-2" onClick={submitForm}>Сохранить</Button>
+          <Button htmlType="submit" type="primary" size="large" extraClass="ml-2">Сохранить</Button>
       </form>
       <div className={styles.choices}>
         <p className="text text_type_main-default text_color_inactive">Вспомнили пароль? <span className="text_color_interface" onClick={() => navigate("/login")}>Войти</span></p>
