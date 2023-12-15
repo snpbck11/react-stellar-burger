@@ -2,15 +2,12 @@ import { useState, useMemo, useEffect } from "react";
 import styles from "./burger-ingredients.module.css";
 import Ingredient from "../ingredient/ingredient";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
-import { useDispatch, useSelector } from "react-redux";
 import { useInView } from "react-intersection-observer";
-import { getIngredients } from "../../utils/api";
+import { useSelector } from "react-redux";
  
 export default function BurgerIngredients() {
   const [current, setCurrent] = useState('buns');
   const { ingredients } = useSelector(state => state.ingredients);
-
-  const dispatch = useDispatch();
 
   const {ref: bunRef, inView: bunInView } = useInView({
     threshold: 0
@@ -47,9 +44,6 @@ export default function BurgerIngredients() {
     }
   }
 
-  useEffect(() => {
-    dispatch(getIngredients());
-  }, []);
   
   const buns = useMemo(() => ingredients.filter((item) => item.type === 'bun'), [ingredients]);
   const sauces = useMemo(() => ingredients.filter((item) => item.type === 'sauce'), [ingredients]);
@@ -58,7 +52,7 @@ export default function BurgerIngredients() {
   return(
     <section className={styles.wrpapper}>
       <h1 className="text text_type_main-large mt-10 mb-5">Соберите бургер</h1>
-      <div style={{display: "flex"}} className="mb-10">
+      <div className={styles.tabs}>
         <Tab value="buns" active={current === "buns"} onClick={setTab}>Булки</Tab>
         <Tab value="sauces" active={current === "sauces"} onClick={setTab}>Соусы</Tab>
         <Tab value="main" active={current === "main"} onClick={setTab}>Начинки</Tab>
