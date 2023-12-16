@@ -1,4 +1,4 @@
-.section {
+.wrapper {
   max-width: 600px;
 }
 
@@ -11,6 +11,10 @@
 .container {
   max-height: calc(100vh - 300px);
   overflow-y: auto;
+}
+
+.tabs {
+  display: flex;
 }
 
 .list {

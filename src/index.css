@@ -1,3 +1,36 @@
 body {
   margin: 0;
 }
+
+#root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #131316;
+  color: #f2f2f3;
+}
+
+.text_color_interface {
+  color: #4C4CFF;
+  transition: color .3s ease;
+}
+
+.text_color_interface:hover {
+  cursor: pointer;
+  color: #F2F2F2;
+}
+
+.link {
+  text-decoration: none;
+  color: inherit;
+  transition: color .3s ease;
+}
+
+.link.active {
+  color: #F2F2F2;
+}
+
+.link:hover {
+  color: #F2F2F2;
+  cursor: pointer;
+}

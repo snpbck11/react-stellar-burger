@@ -9,10 +9,16 @@ import { useSelector, useDispatch } from "react-redux";
 import { addBun, addIngredient, deleteInredient, swapInredient } from "../../services/actions/burger-constructor";
 import { useDrop } from "react-dnd";
 import { closeOrder, showOrder } from "../../services/actions/order-details";
+import { useNavigate } from "react-router";
 
 export default function BurgerConstructor() {
   const { bun, ingredients } = useSelector(state => state.burgerConstructor);
   const { orderNumber, isLoading, isOpen } = useSelector(state => state.orderDetails);
+
+  const user = useSelector(state => state.user.user);
+
+  const navigate = useNavigate();
+
   const dispatch = useDispatch();
 
   const [, dropRef] = useDrop({
@@ -31,30 +37,34 @@ export default function BurgerConstructor() {
   }, [bun, ingredients])
 
   const onOpen = () => {
-    dispatch(showOrder());
-    dispatch(getOrderDetails(ingredientIds));   
-  }
+    if (!user) {
+      navigate("/login");
+    } else {
+      dispatch(showOrder());
+      dispatch(getOrderDetails(ingredientIds));  
+    }
+  };
 
   const onClose = () => {
     dispatch(closeOrder());
-  }
+  };
 
   const handleDeleteIngredient = (ingredient) => {
     dispatch(deleteInredient(ingredient));
-  }
+  };
    
   const totalPrice = useMemo(() => {
     return (bun.price ? bun.price*2 : 0) + ingredients.reduce((acc, item) => acc + item.price, 0)
-  }, [bun, ingredients])
+  }, [bun, ingredients]);
 
   const disabled = !bun._id;
 
- const moveIngredient = (dragIndex, hoverIndex) => {
-  const dragIngredient = ingredients[dragIndex]
-  const newIngredients = [...ingredients]
-  newIngredients.splice(dragIndex, 1)
-  newIngredients.splice(hoverIndex, 0, dragIngredient);
-  dispatch(swapInredient(newIngredients));
+  const moveIngredient = (dragIndex, hoverIndex) => {
+    const dragIngredient = ingredients[dragIndex]
+    const newIngredients = [...ingredients]
+    newIngredients.splice(dragIndex, 1)
+    newIngredients.splice(hoverIndex, 0, dragIngredient);
+    dispatch(swapInredient(newIngredients));
  }
 
   return (
@@ -100,7 +110,7 @@ export default function BurgerConstructor() {
           <p className="text text_type_digits-medium">{totalPrice}</p>
           <CurrencyIcon />
         </div>
-        <Button htmlType="button" type="primary" size="large" onClick={onOpen} disabled={disabled}>Оформить заказ</Button>
+          <Button htmlType="button" type="primary" size="large" onClick={onOpen} disabled={disabled}>Оформить заказ</Button>
         </div>
         )
       }
