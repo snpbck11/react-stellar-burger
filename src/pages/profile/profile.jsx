@@ -5,14 +5,25 @@ import { logout } from "../../services/actions/user";
 
 import { useLocation, Outlet, NavLink } from "react-router-dom";
 
+import { wsUrlProfile } from "../../utils/ws-status";
+import { useEffect } from "react";
+import { connect, disconnect } from "../../services/actions/feed";
+
 export default function Profile() {
   const dispatch = useDispatch();
-
+  
   const handleLogout = () => {
     dispatch(logout());
   };
 
   const location = useLocation();
+
+  useEffect(() => {
+    dispatch(connect(wsUrlProfile));
+    return () => {
+      dispatch(disconnect());
+    };
+  });
 
   return (
     <div className={styles.container}>
