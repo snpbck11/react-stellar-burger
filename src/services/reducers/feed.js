@@ -9,7 +9,6 @@ import { WebsocketStatus } from "../../utils/ws-status";
 const initialState = {
   status: WebsocketStatus.OFFLINE,
   orders: [],
-
   total: null,
   totalToday: null,
   connectingError: "",

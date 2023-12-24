@@ -1,18 +1,22 @@
 import styles from "./order-feed.module.css";
-import { useSelector } from "react-redux";
 import OrderCard from "../order-card/order-card";
+import PropTypes from "prop-types";
 
-export default function OrderFeed() {
-
-  const orders = useSelector(store => store.feed.orders);
+export default function OrderFeed({orders}) {
 
   return (
     <div className={`${styles.orders} custom-scroll`}>
-        <ul className={styles.list}>
-          {orders && orders.map((order) => (
-            <OrderCard order={order} key={order._id} />
-          ))}
-        </ul>
+      {orders && 
+      <ul className={styles.list}>
+        {orders && orders?.map((order) => (
+          <OrderCard order={order} key={order._id} />))
+        }
+      </ul>
+      }
     </div>
   );
 };
+
+OrderFeed.propTypes = {
+  orders: PropTypes.array
+}

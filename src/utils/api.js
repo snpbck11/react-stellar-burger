@@ -23,7 +23,7 @@ export const getIngredientsData = () => {
 };
 
 export const getOrderNumberRequest = (idArray) => {
-  return request('/orders', {
+  return fetchWithRefresh(`${baseUrl}/orders`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json;charset=utf-8',
@@ -164,6 +164,7 @@ export const getUserData = () => {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json;charset=utf-8',
+      authorization: localStorage.getItem("accessToken")
     }
   })
 };

@@ -15,7 +15,12 @@ export default function OrderCard({ order }) {
   const currentIngredients = order?.ingredients.map((item) => getIngredient(item));
   const orderIngredients = useMemo(() => ingredients.filter((item) => order.ingredients.includes(item._id)), [ingredients, order]);
 
-  const totalPrice = useMemo(() => currentIngredients.reduce((acc, item) => acc + item.price, 0), [currentIngredients]);
+  const totalPrice = useMemo(() => currentIngredients.reduce((acc, item) => {
+    if (item.type === "bun") {
+      return acc + item.price*2
+    }
+
+   return acc + item.price }, 0), [currentIngredients]);
 
   const checkOrderStatus = () => {
     switch(order.status) {
@@ -48,6 +53,11 @@ export default function OrderCard({ order }) {
                 <img src={item.image} alt="Ингредиент" className={styles.image} />
               </li>
             ))}
+            {orderIngredients.length > 6 && (
+              <div className={`${styles.excess} text text_type_digits-default`}>
+                {`+${orderIngredients.length - 6}`}
+              </div>
+            )}
           </ul>
           <div className={styles.price}>
             <p className="text text_type_digits-default mr-2">{totalPrice}</p>

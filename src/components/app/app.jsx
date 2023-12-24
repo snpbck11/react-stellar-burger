@@ -12,7 +12,7 @@ import Edit from "../edit-profile/edit-profile";
 import { OnlyAuth, OnlyUnAuth } from "../protected-route/protected-route";
 import Modal from "../modal/modal";
 import IngredientDetails from "../ingredient-details/ingredient-details";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { checkUserAuth } from "../../services/actions/user";
@@ -21,10 +21,13 @@ import { getIngredients } from "../../utils/api";
 function App() {
 
   const ingredients = useSelector(store => store.ingredients.ingredients);
+  const orders = useSelector(store => store.feed.orders);
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
   const background = location.state && location.state.background;
+
+  const reverseOrders = useMemo(() => orders.slice().reverse(), [orders]);
 
   const handleCloseModal = () => {
     navigate(-1);
@@ -50,7 +53,7 @@ function App() {
             <Route path="/forgot-password" element={<OnlyUnAuth component={<ForgotPassword />} />} />
             <Route path="/reset-password" element={<OnlyUnAuth component={<ResetPassword />} />} />
             <Route path="/profile" element={<OnlyAuth component={<Profile />} />} >
-              <Route path="/profile/orders" element={<OnlyAuth component={<OrderFeed />} />} />
+              <Route path="/profile/orders" element={<OnlyAuth component={<OrderFeed orders={reverseOrders}/>} />} />
               <Route path="/profile/" element={<OnlyAuth component={<Edit />} />} />
             </Route>
             <Route path="/profile/orders/:orderNumber" element={<OnlyAuth component={<OrderInfo />} />} />

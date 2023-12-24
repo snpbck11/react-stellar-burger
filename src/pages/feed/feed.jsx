@@ -15,33 +15,33 @@ export default function Feed() {
   const { orders, total, totalToday, isLoading } = useSelector(store => store.feed);
 
   useEffect(() => {
-    dispatch(connect(wsUrl));
+      dispatch(connect(wsUrl));
     return () => {
       dispatch(disconnect());
     }
-  }, []);
+  }, [dispatch]);
 
   return (
     <section className={styles.wrapper}>
       <h1 className="text text_type_main-large pt-10 pb-5">Лента заказов</h1>
       <div className={styles.container}>
-        {isLoading ? (<ThreeDots />) : <OrderFeed />}
+        {isLoading ? (<ThreeDots />) : <OrderFeed orders={orders} />}
         <div className={styles.statusbar}>
           <div className={styles.columns}>
             <div>
               <p className="text text_type_main-medium pb-6">Готовы:</p>
-              <div className={styles.stats}>
-                {orders && orders.splice(0, 20).map(order => (
+              <ul className={`${styles.stats} custom-scroll`}>
+                {orders && orders.map(order => (
                   <li className="text text_type_digits-default text_color_status_done" key={order._id}>
                     {order.status === "done" ? order.number : null}
                   </li>
                 ))}
-              </div>
+              </ul>
             </div>
             <div>
               <p className="text text_type_main-medium pb-6">В работе:</p>
-              <ul className={styles.stats}>
-                {orders && orders.splice(0, 10).map(order => (
+              <ul className={`${styles.stats} custom-scroll`}>
+                {orders && orders.map(order => (
                   <li className="text text_type_digits-default" key={order._id}>
                     {order.status === "pending" ? order.orderNumber : null}
                   </li>
