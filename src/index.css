@@ -20,6 +20,10 @@ body {
   color: #F2F2F2;
 }
 
+.text_color_status_done {
+  color: #00CCCC;
+}
+
 .link {
   text-decoration: none;
   color: inherit;

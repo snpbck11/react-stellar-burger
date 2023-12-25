@@ -12,7 +12,6 @@ export const getUser = () => {
       .then((res) => {
         dispatch(setUser(res.user));
       })
-      .catch(err => console.log(err))
   };
 };
 

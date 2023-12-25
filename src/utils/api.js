@@ -2,7 +2,6 @@ import { resetConstructor } from "../services/actions/burger-constructor";
 import { getIngredientsRequest, ingredientsRequestFailed, ingredientsRequestSuccess } from "../services/actions/ingredients";
 import { getOrderNumber, orderNumberFailed, orderNumberSuccess } from "../services/actions/order-details";
 
-
 const baseUrl = "https://norma.nomoreparties.space/api";
 
 const checkResponse = (res) => {
@@ -24,13 +23,14 @@ export const getIngredientsData = () => {
 };
 
 export const getOrderNumberRequest = (idArray) => {
-  return request('/orders', {
+  return fetchWithRefresh(`${baseUrl}/orders`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json;charset=utf-8'
+      'Content-Type': 'application/json;charset=utf-8',
+      authorization: localStorage.getItem("accessToken"),
     }, 
     body: JSON.stringify({
-      "ingredients": idArray
+      "ingredients": idArray,
     })
   })
 };
@@ -133,7 +133,7 @@ const refreshToken = () => {
       'Content-Type': 'application/json;charset=utf-8'
     },
     body: JSON.stringify({
-      "token": localStorage.getItem("refreshToken")
+      token: localStorage.getItem("refreshToken")
     })
   })
 };
@@ -182,4 +182,8 @@ export const updateUserData = (user) => {
       "password": user.password
     })
   })
+};
+
+export const getOrderRequestApi = (number) => {
+  return request(`/orders/${number}`)
 };

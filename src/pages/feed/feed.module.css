@@ -2,6 +2,7 @@
   max-width: 1240px;
   width: 100%;
   margin: auto;
+  flex: 1;
 }
 
 .container {
@@ -28,7 +29,11 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px 0;
+  flex-wrap: wrap;
+  max-height: 215px;
+  gap: 4px;
+  max-width: 230px;
+  overflow: overlay;
 }
 
 .text_shadow {

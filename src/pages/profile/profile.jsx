@@ -1,18 +1,34 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styles from "./profile.module.css";
 
-import { logout } from "../../services/actions/user";
+import { checkUserAuth, logout } from "../../services/actions/user";
 
 import { useLocation, Outlet, NavLink } from "react-router-dom";
 
+import { wsUrlProfile } from "../../utils/ws-status";
+import { useEffect } from "react";
+import { connect, disconnect } from "../../services/actions/feed";
+
 export default function Profile() {
   const dispatch = useDispatch();
+  const location = useLocation();
 
+  const accessToken = localStorage.getItem("accessToken")?.replace("Bearer ", "");
+  
   const handleLogout = () => {
     dispatch(logout());
   };
 
-  const location = useLocation();
+  useEffect(() => {
+    dispatch(checkUserAuth());
+  }, [])
+
+  useEffect(() => {
+      dispatch(connect(wsUrlProfile(accessToken)));
+    return () => {
+      dispatch(disconnect());
+    };
+  }, []);
 
   return (
     <div className={styles.container}>
