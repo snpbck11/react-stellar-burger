@@ -37,9 +37,13 @@ const BurgerIngredients: FC = () => {
     }
   };
 
-  const buns = useMemo(() => ingredients.filter((item: TIngredient) => item.type === 'bun'), [ingredients]);
-  const sauces = useMemo(() => ingredients.filter((item: TIngredient) => item.type === 'sauce'), [ingredients]);
-  const main = useMemo(() => ingredients.filter((item: TIngredient) => item.type === 'main'), [ingredients]);
+  const { buns, sauces, main } = useMemo(() => {
+    const buns = ingredients.filter((item: TIngredient) => item.type === 'bun');
+    const sauces = ingredients.filter((item: TIngredient) => item.type === 'sauce');
+    const main = ingredients.filter((item: TIngredient) => item.type === 'main');
+
+    return { buns, sauces, main }
+  }, [ingredients]);
 
   return (
     <section className={styles.wrpapper}>

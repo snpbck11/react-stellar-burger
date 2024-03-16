@@ -29,8 +29,9 @@ export const Ingredient: FC<TIngredeintProps> = ({ ingredient }) => {
   }, [bun, ingredients]);
 
   return (
+    <li ref={dragRef} className={styles.item}>
     <Link to={{ pathname: `/ingredients/${ingredientId}` }} state={{ background: location }} className="link">
-      <li ref={dragRef} className={styles.item}>
+      
         <img src={ingredient.image} alt={ingredient.name} className="ml-4 mr-4" />
         <div className={`${styles.price} mb-1 mt-1`}>
           <p className="text text_type_digits-medium">{ingredient.price}</p>
@@ -38,8 +39,9 @@ export const Ingredient: FC<TIngredeintProps> = ({ ingredient }) => {
         </div>
         <p className="text text_type_main-default">{ingredient.name}</p>
         {count > 0 && (<Counter count={count} />)}
-      </li>
+   
     </Link>
+    </li>
   );
 };
 
